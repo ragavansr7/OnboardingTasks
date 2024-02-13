@@ -14,15 +14,32 @@ import (
 const finalWord = "Go!"
 const countdownStart = 3
 
-func Countdown(out io.Writer) {
+// func Countdown(out io.Writer) {
+// 	for i := countdownStart; i > 0; i-- {
+// 		fmt.Fprintln(out, i)
+// 		time.Sleep(1 * time.Second)
+// 	}
+
+// 	fmt.Fprint(out, finalWord)
+// }
+
+func Countdown(out io.Writer, sleeper Sleeper) {
 	for i := countdownStart; i > 0; i-- {
 		fmt.Fprintln(out, i)
-		time.Sleep(1 * time.Second)
+		sleeper.Sleep()
 	}
 
 	fmt.Fprint(out, finalWord)
 }
 
+func (s *SpySleeper) Sleep() {
+	s.Calls++
+}
+
+func (d *DefaultSleeper) Sleep() {
+	time.Sleep(1 * time.Second)
+}
 func main() {
-	Countdown(os.Stdout)
+	sleeper := &DefaultSleeper{}
+	Countdown(os.Stdout , sleeper)
 }
